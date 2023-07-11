@@ -123,32 +123,15 @@ limit 5;
  
  -- 18  Which countries have never won gold medal but have won silver/bronze medals?
  
- select region from noc_regions a 
- join athlete_events b on a.noc = b.noc
-where medal = 'gold' is null
- group by region;
- 
- SELECT region
-FROM noc_regions a
-LEFT JOIN athlete_events b ON a.noc = b.noc AND b.medal = 'Gold'
-WHERE b.medal IS NULL
-GROUP BY region;
- 
- 
-select region from noc_regions a
-join athlete_events b on a.noc = b.noc
-where (select medal from athlete_events where medal in ('bronze','silver'))
-and region not in (select region FROM athlete_events WHERE medal = 'Gold')
-group by region;
-
-select region as country,
-	count(case when medal= "gold" then null end )as Gold_medal,
-    count(case when medal= "silver" then "silver" end )as silver_medal,
-    count(case when medal= "bronze" then "bronze" end )as bronze_medal
-from athlete_events as o, noc_regions as r 
-where o.noc= r.noc
-group by region
-order by region;
+SELECT COUNTRY, SUM(GOLD_MEDAL) AS GOLD, SUM(SILVER_MEDAL) AS SILVER, SUM(BRONZE_MEDAL) AS BRONZE FROM
+(SELECT b.REGION AS COUNTRY, CASE WHEN MEDAL = 'Gold' THEN 1 ELSE 0 END AS GOLD_MEDAL, CASE WHEN MEDAL = 'Silver' THEN 1 ELSE 0 END AS SILVER_MEDAL,
+CASE WHEN MEDAL = 'Bronze' THEN 1 ELSE 0 END AS BRONZE_MEDAL
+FROM athlete_events a
+JOIN noc_regions b USING(NOC)
+)
+GROUP BY 1
+HAVING GOLD = 0 AND (SILVER >0 or BRONZE > 0)
+ORDER BY 3 ASC,4 DESC;
 
  -- 19 In which Sport/event, India has won highest medals.
 
