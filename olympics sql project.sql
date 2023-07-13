@@ -119,7 +119,7 @@ limit 5;
  group by region,games
  order by games desc;
   
---  16 & 17 is relevant same 
+--  16 & 17 is relevant same as 15
  
  -- 18  Which countries have never won gold medal but have won silver/bronze medals?
  
